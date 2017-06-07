@@ -77,7 +77,7 @@ function process() {
                 code: item.code,
                 hash: item.hash,
                 attributes: item.attributes,
-                description: item.attributes,
+                description: item.description,
                 price: item.price
             });
         }
