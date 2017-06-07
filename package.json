@@ -25,6 +25,7 @@
     "yargs": "^8.0.1"
   },
   "devDependencies": {
+    "@types/mongodb": "^2.2.3",
     "@types/node": "^7.0.28",
     "typescript": "^2.3.4"
   }

@@ -18,10 +18,13 @@ if (argv.prod) {
     config = require('./config.prod').config;
 }
 
-schedule.scheduleJob('42 * * * *', () => {
+if (argv.prod) {
+    schedule.scheduleJob('42 * * * *', () => {
+        process();
+    });
+} else {
     process();
-});
-
+}
 
 function process() {
     co(function* () {
@@ -61,7 +64,7 @@ function process() {
 
         const collection: mongo.Collection = db.collection('items');
 
-        // yield collection.remove({});
+        yield collection.remove({});
 
         for (const item of filteredItems) {
             const databaseItem = yield collection.findOne({
@@ -78,7 +81,10 @@ function process() {
                 hash: item.hash,
                 attributes: item.attributes,
                 description: item.description,
-                price: item.price
+                price: item.price,
+                categoryCode: item.categoryCode,
+                categoryName: item.categoryName,
+                subCategoryName: item.subCategoryName
             });
         }
 
@@ -100,7 +106,7 @@ function isRowValid(row): boolean {
 }
 
 function isRowItem(row): boolean {
-    const pattern = new RegExp(/([A-Z]{2})-(.*){3,13}/);
+    const pattern = new RegExp(/^(([A-Z]){2})-([^ ]*){3,13}$/);
 
     if (pattern.test(row[0])) {
         return true;
@@ -110,7 +116,7 @@ function isRowItem(row): boolean {
 }
 
 function isRowHeader(row): boolean {
-    const pattern = new RegExp(/([A-Z]{2})-(.*){3,13}/);
+    const pattern = new RegExp(/^(([A-Z]){2})-([^ ]*){3,13}$/);
 
     if (pattern.test(row[0])) {
         return false;
