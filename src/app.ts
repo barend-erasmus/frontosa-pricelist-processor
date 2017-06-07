@@ -2,15 +2,25 @@
 import xlsx from 'node-xlsx';
 import * as co from 'co';
 import * as mongo from 'mongodb';
+import * as path from 'path';
 
 // Imports models
 import { Item } from './models/item';
 import { ProcessedRow } from './models/processed-row';
 
+// Import configurations
+let config = require('./config').config;
+
+const argv = require('yargs').argv;
+
+if (argv.prod) {
+  config = require('./config.prod').config;
+}
+
 
 co(function* () {
 
-    const filename: string = './src/price-lists/FrontosaPrice_2017-06-06.xls';
+    const filename: string = path.join(config.priceListDir, 'FrontosaPrice_2017-06-06.xls');
 
     const workSheetsFromFile = xlsx.parse(filename);
 
@@ -56,7 +66,7 @@ co(function* () {
             continue;
         }
 
-        console.log(`Inserting ${item.code}`)
+        console.log(`Inserting ${item.code}`);
         yield collection.insertOne({
             code: item.code,
             hash: item.hash,

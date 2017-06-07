@@ -1,0 +1,37 @@
+{
+    "machine": {
+        "host": "$host",
+        "username": "$username",
+        "password": "$password"
+    },
+    "commands": [
+        "sudo apt-get update",
+        "curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -",
+        "sudo apt-get install -y nodejs",
+
+        "npm --prefix /opt/frontosa-pricelist-processor install",
+        "docker stop frontosa-pricelist-processor",
+        "docker rm frontosa-pricelist-processor",
+        "docker stop frontosa-db",
+        "docker rm frontosa-db",
+        "docker build --no-cache -t frontosa-pricelist-processor /docker-uploads/frontosa-pricelist-processor",
+        "docker run --name frontosa-db -v /opt/frontosa-db/mongodb:/data/db -d mongo",
+        "docker run -d --name frontosa-pricelist-processor -v /logs:/logs -v /opt/frontosa-pricelist-processor:/opt/frontosa-pricelist-processor --link frontosa-db:mongo -t frontosa-pricelist-processor"
+    ],
+     "directories": [
+        {
+            "source": "$workspace/src",
+            "destination": "/opt/frontosa-pricelist-processor/src"
+        }
+    ],
+    "files": [
+        {
+            "source": "$workspace/package.json",
+            "destination": "/opt/frontosa-pricelist-processor/package.json"
+        },
+        {
+            "source": "$workspace/Dockerfile",
+            "destination": "/docker-uploads/frontosa-pricelist-processor/Dockerfile"
+        }
+    ]
+}
