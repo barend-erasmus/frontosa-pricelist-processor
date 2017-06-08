@@ -55,7 +55,16 @@ export class ItemService {
         });
     }
 
-    public listItems(categoryCode: string, subCategoryName: string, query: string, sortPropertyName: string, start: number, length: number): Promise<Item[]> {
+    public findCategory(code: string): Promise<Category> {
+        const self = this;
+        return co(function* () {
+            const categories: Category[] = yield self.listCategories();
+
+            return categories.find((x) => x.code === code);
+        });
+    }
+
+    public listItems(categoryCode: string, query: string, sortPropertyName: string, start: number, length: number): Promise<Item[]> {
         const self = this;
         return co(function* () {
 
@@ -65,14 +74,66 @@ export class ItemService {
 
             const findQuery: {} = {};
 
+            if (categoryCode) {
+                findQuery['categoryCode'] = categoryCode;
+            }
+
+            if (query) {
+                findQuery['$text'] = { $search: `"${query}"` };
+            }
+
             const sortQuery: {} = {};
-            sortQuery[sortPropertyName] = -1;
+            sortQuery[sortPropertyName] = 1;
 
             const items: Item[] = yield collection.find(findQuery).sort(sortQuery).skip(start).limit(length).toArray();
 
             db.close();
 
             return items;
+        });
+    }
+
+    public findItem(code: string): Promise<Item> {
+        const self = this;
+        return co(function* () {
+
+            const db: mongo.Db = yield mongo.MongoClient.connect(self.uri);
+
+            const collection: mongo.Collection = db.collection('items');
+
+            const item: Item = yield collection.findOne({
+                code: code
+            });
+
+            db.close();
+
+            return item;
+        });
+    }
+
+    public numberOfPages(categoryCode: string, query: string, pageSize: number): Promise<number> {
+        const self = this;
+        return co(function* () {
+
+            const db: mongo.Db = yield mongo.MongoClient.connect(self.uri);
+
+            const collection: mongo.Collection = db.collection('items');
+
+            const findQuery: {} = {};
+
+            if (categoryCode) {
+                findQuery['categoryCode'] = categoryCode;
+            }
+
+            if (query) {
+                findQuery['$text'] = { $search: `"${query}"` };
+            }
+
+            const items: Item[] = yield collection.find(findQuery).toArray();
+
+            db.close();
+
+            return Math.ceil(items.length / pageSize);
         });
     }
 }
