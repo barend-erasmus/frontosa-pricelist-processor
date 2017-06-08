@@ -29,7 +29,7 @@ if (argv.prod) {
 function process() {
     co(function* () {
 
-        const filename: string = path.join(config.priceListDir, 'FrontosaPrice_2017-06-06.xls');
+        const filename: string = path.join(__dirname, 'price-lists', 'FrontosaPrice_2017-06-06.xls');
 
         const workSheetsFromFile = xlsx.parse(filename);
 
