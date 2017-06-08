@@ -28,11 +28,14 @@ export class Item {
         const categoryCode: string = code.split('-')[0];
         const categoryName: string = null;
         const h: string = hash(row);
+        const name: string = to.capital(to.lower(description.split(',')[0].toString()));
+        
 
-        return new Item(code, description, price, attributes, categoryCode, categoryName, subCategoryName, h);
+        return new Item(name, code, description, price, attributes, categoryCode, categoryName, subCategoryName, h);
     }
 
     constructor(
+        public name: string,
         public code: string,
         public description: string,
         public price: number,
@@ -43,12 +46,12 @@ export class Item {
         public hash: string) {
 
             if (!this.categoryName) {
-                this.categoryName = this.categoryCodeToCategoryName(this.categoryCode);
+                this.categoryName = Item.convertCategoryCodeToCategoryName(this.categoryCode);
             }
 
     }
 
-    private categoryCodeToCategoryName(categoryCode: string): string {
+    public static convertCategoryCodeToCategoryName(categoryCode: string): string {
         const map: any = {
             "SY": 'My Office & Black Box',
             "BS": 'Bundle Special',
@@ -134,5 +137,4 @@ export class Item {
 
         return map[categoryCode];
     }
-
 }

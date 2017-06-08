@@ -82,6 +82,7 @@ function process() {
 
             console.log(`Inserting ${item.code}`);
             yield collection.insertOne({
+                name: item.name,
                 code: item.code,
                 hash: item.hash,
                 attributes: item.attributes,
@@ -92,6 +93,11 @@ function process() {
                 subCategoryName: item.subCategoryName
             });
         }
+
+        yield collection.createIndex({
+            name: 'text',
+            description: 'text'
+        });
 
         db.close();
     }).catch((err: Error) => {
@@ -110,6 +116,11 @@ function isRowValid(row): boolean {
     if (row[0] === undefined) {
         return false;
     }
+
+    if (row[3] === undefined) {
+        return false;
+    }
+   
     return true;
 }
 
