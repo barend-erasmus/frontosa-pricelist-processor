@@ -19,12 +19,15 @@ if (argv.prod) {
 }
 
 if (argv.prod) {
-    schedule.scheduleJob('42 * * * *', () => {
+    schedule.scheduleJob('30 * * * *', () => {
+        console.log('Processing');
         process();
     });
 } else {
     process();
 }
+
+console.log(argv);
 
 function process() {
     co(function* () {
@@ -60,7 +63,9 @@ function process() {
             }
         }
 
-        const db: mongo.Db = yield mongo.MongoClient.connect('mongodb://localhost:27017/frontosa');
+        console.log(`${filteredItems.length}`);
+
+        const db: mongo.Db = yield mongo.MongoClient.connect('mongodb://mongo:27017/frontosa');
 
         const collection: mongo.Collection = db.collection('items');
 
@@ -89,7 +94,10 @@ function process() {
         }
 
         db.close();
-    });
+    }).catch((err: Error) => {
+        console.log(err.message);
+        console.log(err.stack);
+    })
 
 }
 
