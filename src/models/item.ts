@@ -1,5 +1,6 @@
 // Imports
 import * as hash from 'object-hash';
+import * as to from 'to-case';
 
 // Imports models
 import { ProcessedRow } from './processed-row';
@@ -19,8 +20,8 @@ export class Item {
                 attributes[name] = row.row[i];
             }
         }
-
-        const subCategoryName: string = row.header[0];
+        
+        const subCategoryName: string = to.capital(to.lower(row.header[0].toString()));
         const code: string = row.row[0];
         const description: string = row.row[3];
         const price: number = parseFloat(row.row[1]);
