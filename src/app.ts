@@ -32,7 +32,7 @@ console.log(argv);
 function process() {
     co(function* () {
 
-        const filename: string = path.join(__dirname, 'price-lists', 'FrontosaPrice_2017-06-09.xls');
+        const filename: string = path.join(__dirname, 'price-lists', 'FrontosaPrice_2017-06-14.xls');
 
         const workSheetsFromFile = xlsx.parse(filename);
 
