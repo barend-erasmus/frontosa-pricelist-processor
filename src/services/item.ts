@@ -23,7 +23,7 @@ export class ItemService {
             const data: any[] = yield collection.aggregate([
                 {
                     $group: {
-                        _id: { categoryCode: '$categoryCode', categoryName: '$categoryName', subCategoryName: '$subCategoryName' },
+                        _id: { categoryCode: '$categoryCode', categoryName: '$categoryName' },
                         count: { $sum: 1 }
                     }
                 }
@@ -31,27 +31,13 @@ export class ItemService {
 
             db.close();
 
-            const categories: Category[] = data.map((x) => new Category(x._id.categoryCode, x._id.categoryName, x.count, [new Category(null, x._id.subCategoryName, x.count, null)]))
+            const categories: Category[] = data.map((x) => new Category(x._id.categoryCode, x._id.categoryName, x.count));
 
-            const rolledUpCategories: Category[] = [];
-
-            categories.forEach((x) => {
-                const category: Category = rolledUpCategories.find((y) => y.code === x.code);
-
-                if (!category) {
-                    rolledUpCategories.push(x);
-                } else {
-                    category.subCategories = category.subCategories.concat(x.subCategories);
-
-                    category.count = 0;
-
-                    category.subCategories.forEach((x) => {
-                        category.count += x.count;
-                    });
-                }
+            return categories.sort((a, b) => {
+                if (a.name < b.name) return -1;
+                if (a.name > b.name) return 1;
+                return 0;
             });
-
-            return rolledUpCategories;
         });
     }
 

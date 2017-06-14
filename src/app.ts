@@ -89,14 +89,16 @@ function process() {
                 description: item.description,
                 price: item.price,
                 categoryCode: item.categoryCode,
-                categoryName: item.categoryName,
-                subCategoryName: item.subCategoryName
+                categoryName: item.categoryName
             });
         }
 
+        yield collection.dropIndexes();
+
         yield collection.createIndex({
             name: 'text',
-            description: 'text'
+            description: 'text',
+            code: 'text'
         });
 
         db.close();
@@ -120,12 +122,12 @@ function isRowValid(row): boolean {
     if (row[3] === undefined) {
         return false;
     }
-   
+
     return true;
 }
 
 function isRowItem(row): boolean {
-    const pattern = new RegExp(/^(([A-Z]){2})-([^ ]*){3,13}$/);
+    const pattern = new RegExp(/^(([A-Z|a-z]){2})-([^ ]*){3,13}$/);
 
     if (pattern.test(row[0])) {
         return true;
@@ -135,7 +137,7 @@ function isRowItem(row): boolean {
 }
 
 function isRowHeader(row): boolean {
-    const pattern = new RegExp(/^(([A-Z]){2})-([^ ]*){3,13}$/);
+    const pattern = new RegExp(/^(([A-Z|a-z]){2})-([^ ]*){3,13}$/);
 
     if (pattern.test(row[0])) {
         return false;
