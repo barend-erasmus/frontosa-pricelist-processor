@@ -32,7 +32,7 @@ console.log(argv);
 function process() {
     co(function* () {
 
-        const filename: string = path.join(__dirname, 'price-lists', 'FrontosaPrice_2017-06-26.xls');
+        const filename: string = path.join(__dirname, 'price-lists', 'FrontosaPrice_2017-07-18.xls');
 
         const workSheetsFromFile = xlsx.parse(filename);
 
@@ -65,7 +65,7 @@ function process() {
 
         console.log(`${filteredItems.length}`);
 
-        const db: mongo.Db = yield mongo.MongoClient.connect('mongodb://mongo:27017/frontosa');
+        const db: mongo.Db = yield mongo.MongoClient.connect('mongodb://207.154.251.91:27017/frontosa-ui');
 
         const collection: mongo.Collection = db.collection('items');
 
